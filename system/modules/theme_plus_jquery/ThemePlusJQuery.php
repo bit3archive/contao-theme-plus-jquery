@@ -44,45 +44,20 @@ class ThemePlusJQuery
 	public function addJQuery($objPage, $objLayout, $objPageRegular)
 	{
 		$strSrc = $GLOBALS['TL_JQUERY_VERSION'][$objLayout->jqueryVersion][$objLayout->jquerySource];
-
+		
 		/* Fallback */
 		if (!$strSrc)
 		{
 			$strSrc = 'plugins/jquery/js/jquery-1.6.2.min.js';
 		}
 
-		if ($objLayout->mooSource)
-		{
-			// search mootools more script and add jquery after it
-			$i = 0;
-			foreach ($GLOBALS['TL_JAVASCRIPT'] as $k=>$strJavascript)
-			{
-				if (strpos($strJavascript, '/mootools-more.js') !== false)
-				{
-					$i = $k + 1;
-					break;
-				}
-			}
+		// add jquery
+		$GLOBALS['TL_JAVASCRIPT_FRAMEWORK']['jquery'] = $strSrc;
 
-			// implicit add noconflict script
-			$strSrc = array
-			(
-				$strSrc,
-				'system/modules/theme_plus_jquery/html/jquery-nc.js'
-			);
-
-			// insert script(s)
-			array_insert($GLOBALS['TL_JAVASCRIPT'], $i, $strSrc);
-		}
-		else
+		// add noconflict mode
+		if ($objLayout->mooSource || $objLayout->jqueryNoConflict)
 		{
-			// add noconflict script
-			if ($objLayout->jqueryNoConflict)
-			{
-				array_unshift($GLOBALS['TL_JAVASCRIPT'], 'system/modules/theme_plus_jquery/html/jquery-nc.js');
-			}
-			// add jquery on top
-			array_unshift($GLOBALS['TL_JAVASCRIPT'], 'plugins/mootools/' . MOOTOOLS . '/mootools-more.js');
+			$GLOBALS['TL_JAVASCRIPT_FRAMEWORK']['jquery-noconflict'] = 'system/modules/theme_plus_jquery/html/jquery-nc.js';
 		}
 	}
 }
